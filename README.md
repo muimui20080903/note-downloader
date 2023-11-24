@@ -1,4 +1,4 @@
-# note-download
+# note-downloader
 [note.com](https://note.com/)の記事をローカルに保存する。
 # 使用方法 usage
 ## 準備
