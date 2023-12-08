@@ -173,7 +173,10 @@ const getLikesByUserID = async (userID: string): Promise<LikesNoteLinks> => {
   $('a.o-textNote__link.a-link').each((_: number, element: string) => {
     const href = $(element).attr('href')
     const url = `https://note.com${href}`;
-    const title = $(element).attr('aria-label');
+    const titleStr = $(element).attr('aria-label');
+    const forbiddenChars = /[\/\\\:\*\?"<>\|]/g; // 禁止文字の正規表現
+    // 使用できない文字をアンダースコアに置き換える
+    const title = titleStr.replace(forbiddenChars, '_');
     links.push({ url, title });
   });
   return links;
@@ -211,6 +214,9 @@ const main = async () => {
     const json = await Deno.readTextFile("./noteUrlList.json");
     const urls = JSON.parse(json)
     for (const link of urls) {
+      const forbiddenChars = /[\/\\\:\*\?"<>\|]/g; // 禁止文字の正規表現
+      // 使用できない文字をアンダースコアに置き換える
+      link.title = link.title.replace(forbiddenChars, '_');
       // URLが取得できなかった場合はスキップ
       if (!link.url || !link.title) continue
       // すでに取得済みの場合はスキップ
@@ -224,7 +230,6 @@ const main = async () => {
       }
     }
   }
-  console.log("保存終了～")
 }
 
 main()

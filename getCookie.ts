@@ -24,4 +24,7 @@ const getCookie = async () => {
 
 getCookie().then((cookie) => {
   Deno.writeTextFile("./.env", `cookie = "${cookie}"\n`, { append: true })
+  .then(() => {
+    console.log("cookieを取得しました。")
+  })
 })
