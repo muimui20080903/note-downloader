@@ -2,7 +2,7 @@ import { load } from "https://deno.land/std@0.203.0/dotenv/mod.ts"
 await load({ export: true })
 import * as cheerio from "https://esm.sh/cheerio@1.0.0-rc.12"
 
-const savePath = "."
+const savePath = Deno.env.get("savePath") || "./"
 
 const saveNote = async (noteUrl: string): Promise<void> => {
   const contentKey: string | undefined = noteUrl.split("/").pop()
@@ -213,7 +213,7 @@ const main = async () => {
   }
   // ファイルから取得する場合
   {
-    const json = await Deno.readTextFile("./noteUrlList.json");
+    const json = await Deno.readTextFile("./noteUrlList.json")
     const urls = JSON.parse(json)
     for (const link of urls) {
       const forbiddenChars = /[\/\\\:\*\?"<>\|]/g; // 禁止文字の正規表現
