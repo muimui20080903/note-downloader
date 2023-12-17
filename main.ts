@@ -2,6 +2,8 @@ import { load } from "https://deno.land/std@0.203.0/dotenv/mod.ts"
 await load({ export: true })
 import * as cheerio from "https://esm.sh/cheerio@1.0.0-rc.12"
 
+const savePath = "."
+
 const saveNote = async (noteUrl: string): Promise<void> => {
   const contentKey: string | undefined = noteUrl.split("/").pop()
   const APIurl = `https://note.com/api/v3/notes/${contentKey}`
@@ -26,11 +28,11 @@ const saveNote = async (noteUrl: string): Promise<void> => {
   // 使用できない文字をアンダースコアに置き換える
   const fileName = fileNameStr.replace(forbiddenChars, '_');
   console.log(`saving ${fileName}`)
-  Deno.writeTextFile(`./noteJSON/${fileName}.json`, body)
+  Deno.writeTextFile(`${savePath}/noteJSON/${fileName}.json`, body)
 
   // 本文の前に追加する要素
   const noteData = json.data
-  const eyecatch = noteData.eyecatch ? `target="_blank"><img src="${noteData.eyecatch}" alt="アイキャッチ" style="max-width: 100%;">`// アイキャッチを中央揃えに
+  const eyecatch = noteData.eyecatch ? `<img src="${noteData.eyecatch}" alt="アイキャッチ" style="max-width: 100%;">`// アイキャッチを中央揃えに
     : ""
   const profileImg = `<img src="${noteData.user.user_profile_image_path}" alt="" width="56" height="56">`
   const createDate: string = new Date(noteData.created_at).toLocaleString()
@@ -149,7 +151,7 @@ const saveNote = async (noteUrl: string): Promise<void> => {
   </html>
 `
   // 保存
-  Deno.writeTextFile(`./noteHTML/${fileName}.html`, html)
+  Deno.writeTextFile(`${savePath}/noteHTML/${fileName}.html`, html)
 }
 
 // いいねしたノートのリンクを取得
@@ -184,7 +186,7 @@ const getLikesByUserID = async (userID: string): Promise<LikesNoteLinks> => {
 
 const main = async () => {
   // ./noteHTMLにあるファイル名を取得
-  const files = Deno.readDirSync("./noteHTML")
+  const files = Deno.readDirSync(`${savePath}/noteHTML`)
   // イテレータを配列に変換してからmapを使用
   const fileNames: string[] = Array.from(files).map((file) => file.name.split("-").at(-1)?.slice(0, -5)!)
 
